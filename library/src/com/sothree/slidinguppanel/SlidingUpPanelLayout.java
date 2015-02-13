@@ -287,9 +287,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
             if (defAttrs != null) {
                 int gravity = defAttrs.getInt(0, Gravity.NO_GRAVITY);
                 setGravity(gravity);
+                defAttrs.recycle();
             }
 
-            defAttrs.recycle();
 
             TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SlidingUpPanelLayout);
 
@@ -309,9 +309,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mAnchorPoint = ta.getFloat(R.styleable.SlidingUpPanelLayout_umanoAnchorPoint, DEFAULT_ANCHOR_POINT);
 
                 mSlideState = PanelState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_umanoInitialState, DEFAULT_SLIDE_STATE.ordinal())];
+                ta.recycle();
             }
 
-            ta.recycle();
         }
 
         final float density = context.getResources().getDisplayMetrics().density;
@@ -350,8 +350,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        mMainView = getChildAt(0);
+        mSlideableView = getChildAt(1);
         if (mDragViewResId != -1) {
             setDragView(findViewById(mDragViewResId));
+        } else {
+            setDragView(mSlideableView);
         }
     }
 
@@ -685,11 +689,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
             throw new IllegalStateException("Sliding up panel layout must have exactly 2 children!");
         }
 
-        mMainView = getChildAt(0);
-        mSlideableView = getChildAt(1);
-        if (mDragView == null) {
-            setDragView(mSlideableView);
-        }
 
         // If the sliding panel is not visible, then put the whole view in the hidden state
         if (mSlideableView.getVisibility() != VISIBLE) {
