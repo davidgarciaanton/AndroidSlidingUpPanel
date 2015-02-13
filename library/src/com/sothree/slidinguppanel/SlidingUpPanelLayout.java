@@ -450,7 +450,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                         collapsePanel();
                     }
                 }
-            });
+            });;
         }
     }
 
@@ -628,11 +628,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             int height = layoutHeight;
-
             if (child == mMainView && !mOverlayContent && mSlideState != SlideState.HIDDEN) {
                 height -= mPanelHeight;
             } else if (child == mSlideableView && !mExpandAll) {
-                height = Math.min((int) (height * mAnchorPoint + 0.5), layoutHeight);
+                if (!mOverlayContent && mSlideState != SlideState.HIDDEN)
+                    height -= mPanelHeight;
+
+                height = Math.min((int) (height * mAnchorPoint + 0.5) + mPanelHeight, layoutHeight);
             }
 
             int childWidthSpec;
@@ -652,7 +654,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
             } else {
                 childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
             }
-
 
             child.measure(childWidthSpec, childHeightSpec);
 
@@ -820,12 +821,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     private boolean expandPanel(View pane, int initialVelocity, float mSlideOffset) {
-
-        final float maxOffset = 1.0f;
-        final float minOffset = 0.0f;
-
-        mSlideOffset = Math.max(minOffset, Math.min(maxOffset, mSlideOffset));
-
         return mFirstLayout || smoothSlideTo(mSlideOffset, initialVelocity);
     }
 
